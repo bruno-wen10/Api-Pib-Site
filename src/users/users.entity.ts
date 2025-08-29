@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 
 
@@ -32,9 +32,9 @@ export class User{
     @Column()
     politicasLGPD: boolean;
 
-    @Column({ default: false })
-    isDeleted: boolean;
-
+    @DeleteDateColumn({ nullable: true })
+    deletedAt?: Date;
+    
     @CreateDateColumn()
     createdAt: Date;
 

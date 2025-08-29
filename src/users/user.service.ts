@@ -1,68 +1,78 @@
+import { IsNull, Repository } from "typeorm";
+import { User } from "./users.entity";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "./users.entity";
-import { Repository } from "typeorm";
-import  * as bcrypt from 'bcryptjs'; 
-
+import bcrypt from "node_modules/bcryptjs";
 
 @Injectable()
 export class UsersService {
-    constructor(
-        @InjectRepository(User)
-        private usersRepository: Repository<User>,
-    ) {}
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
-    async create(user: Partial<User>): Promise<User> {
-        if (!user.password) {
-        throw new Error('Password is required');
+  async create(user: Partial<User>): Promise<User> {
+    if (!user.password) {
+      throw new Error('Password is required');
     }
-        const hashedPassword = await bcrypt.hash(user.password, 10);
-        const newUser = this.usersRepository.create({ ...user, password: hashedPassword})
-        return this.usersRepository.save(newUser);
-    }
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const newUser = this.usersRepository.create({
+      ...user,
+      password: hashedPassword,
+    });
+    return this.usersRepository.save(newUser);
+  }
 
-    findAll(): Promise<User[]> {
-        return this.usersRepository.find();
-    }
+  //  Buscar apenas usuários ativos (não deletados)
+  async findAll(): Promise<User[]> {
+    return this.usersRepository.find({
+      where: { deletedAt: IsNull() },
+    });
+  }
 
-    findById(id: number): Promise<User | null> {
-        return this.usersRepository.findOneBy({ id });
-    }
-    findByEmail(email: string): Promise<User | null> {
-        return this.usersRepository.findOneBy({ email });
-    }
+  //  Buscar 1 usuário, mas só se não estiver deletado
+  async findById(id: number): Promise<User | null> {
+    return this.usersRepository.findOne({
+      where: { id, deletedAt: IsNull() },
+    });
+  }
 
-    async update(id: number, user: Partial<User>): Promise<User> {
-        if(user.password){
-           
-            user.password = await bcrypt.hash(user.password, 10);
-        }
+  async findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOne({
+      where: { email, deletedAt: IsNull() },
+    });
+  }
 
-        return this.usersRepository.save({ ...user, id });
+  async update(id: number, user: Partial<User>): Promise<User> {
+    if (user.password) {
+      user.password = await bcrypt.hash(user.password, 10);
     }
+    return this.usersRepository.save({ ...user, id });
+  }
 
-    async remove(id: number): Promise<void> {
-        await this.usersRepository.update(id, { isDeleted: true });
-    }
+  //  Soft delete (não apaga, só preenche deletedAt)
+  async remove(id: number): Promise<void> {
+    await this.usersRepository.softDelete(id);
+  }
 
-// metodo que restaura os users deletados
-    async restore(id: number): Promise<void> {
-        await this.usersRepository.update(id, { isDeleted: false });
-    }
+  //  Restaurar usuário deletado - Falta criar função no controller
+  async restore(id: number): Promise<void> {
+    await this.usersRepository.restore(id);
+  }
 
-    // Método para buscar inclusive os usuários deletados 
-    findWithDeleted(): Promise<User[]> {
-        return this.usersRepository.find({ 
-            withDeleted: true 
-        });
-    }
+  //  Buscar todos (inclusive deletados) - Falta criar função no controller
+  async findWithDeleted(): Promise<User[]> {
+    return this.usersRepository.find({ withDeleted: true });
+  }
 
-    async validatePassword( email: string, password: string): Promise<User | null>{
-        const user = await this.findByEmail(email);
-        if (!user) return null;
-        const isPasswordValid = await bcrypt.compare(password, user.password); // compara senha com hash
-        if (!isPasswordValid) return null;
-        return user;
-    }
+  //  Validação de senha (só para usuários ativos)
+  async validatePassword(email: string, password: string): Promise<User | null> {
+    const user = await this.findByEmail(email);
+    if (!user) return null;
 
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) return null;
+
+    return user;
+  }
 }
