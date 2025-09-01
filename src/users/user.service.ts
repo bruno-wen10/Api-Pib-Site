@@ -3,6 +3,7 @@ import { User } from "./users.entity";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import bcrypt from "node_modules/bcryptjs";
+import { CreateUserDto } from "./dto/create-users-dto";
 
 @Injectable()
 export class UsersService {
@@ -11,7 +12,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(user: Partial<User>): Promise<User> {
+  async create(user: CreateUserDto): Promise<User> {
     if (!user.password) {
       throw new Error('Password is required');
     }

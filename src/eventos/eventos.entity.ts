@@ -47,14 +47,14 @@ export class Evento {
   @Column({ type: "date", nullable: true })
   dataFim_evento: Date;
 
-   @DeleteDateColumn({ nullable: true })
-      deletedAt?: Date;
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date;
       
-      @CreateDateColumn()
-      createdAt: Date;
-  
-      @UpdateDateColumn()
-      updatedAt: Date;
+   @CreateDateColumn()
+   createdAt: Date;
+
+   @UpdateDateColumn()
+   updatedAt: Date;
 
   // Relações
   @OneToMany(() => EventoFoto, (foto) => foto.evento, { cascade: true })

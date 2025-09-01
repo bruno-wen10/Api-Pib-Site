@@ -20,7 +20,7 @@ import { AppService } from './app.service';
       synchronize: true,
     }),
     UsersModule,
-    AuthModule, // ⚠️ precisa importar o módulo de autenticação
+    AuthModule, 
   ],
   controllers: [AppController],
   providers: [AppService],
