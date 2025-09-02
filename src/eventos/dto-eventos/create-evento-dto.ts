@@ -1,15 +1,24 @@
-import { IsString, IsOptional, IsBoolean, IsDate, IsArray } from 'class-validator';
+import { 
+  IsString, 
+  IsOptional, 
+  IsBoolean, 
+  IsDate, 
+  ValidateNested 
+} from 'class-validator';
+import { EventoFotosDto } from '../eventos-fotos/dto-eventos-fotos/eventos-fotos-dto';
+import { EventoVideosDto } from '../eventos-videos/dto-eventos/eventos-videos-dto';
+import { Type } from 'class-transformer';
 
 export class CreateEventoDto {
+
   @IsString()
-  lideranca_responsavel: string;
+  nome_evento: string;
+  @IsString()
+  lideranca_responsavel?: string;
 
   @IsOptional()
   @IsString()
   inscricao?: string;
-
-  @IsString()
-  titulo: string;
 
   @IsOptional()
   @IsString()
@@ -32,7 +41,7 @@ export class CreateEventoDto {
 
   @IsOptional()
   @IsString()
-  imagem?: string;
+  imagensEvento?: string;
 
   @IsOptional()
   @IsBoolean()
@@ -47,10 +56,12 @@ export class CreateEventoDto {
   dataFim_evento?: Date;
 
   @IsOptional()
-  @IsArray()
-  fotos?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => EventoFotosDto)
+  fotos?: EventoFotosDto[];
 
   @IsOptional()
-  @IsArray()
-  videos?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => EventoVideosDto)
+  videos?: EventoVideosDto[];
 }

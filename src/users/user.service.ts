@@ -32,7 +32,7 @@ export class UsersService {
   }
 
   //  Buscar 1 usuário, mas só se não estiver deletado
-  async findById(id: number): Promise<User | null> {
+  async findById(id: string): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { id, deletedAt: IsNull() },
     });
@@ -44,7 +44,7 @@ export class UsersService {
     });
   }
 
-  async update(id: number, user: Partial<User>): Promise<User> {
+  async update(id: string, user: Partial<User>): Promise<User> {
     if (user.password) {
       user.password = await bcrypt.hash(user.password, 10);
     }
@@ -52,12 +52,12 @@ export class UsersService {
   }
 
   //  Soft delete (não apaga, só preenche deletedAt)
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     await this.usersRepository.softDelete(id);
   }
 
   //  Restaurar usuário deletado - Falta criar função no controller
-  async restore(id: number): Promise<void> {
+  async restore(id: string): Promise<void> {
     await this.usersRepository.restore(id);
   }
 

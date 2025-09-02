@@ -24,7 +24,7 @@ export class UsersController {
   // GET /users/:id → retorna 1 usuário pelo ID
   @Get(':id')
   findOneById(@Param('id') id: string) { // @Param pega o valor da URL
-    return this.usersService.findById(Number(id)); // Converte para número
+    return this.usersService.findById(id); // Converte para número
   }
 
   // GET /users/email/:email
@@ -36,12 +36,12 @@ export class UsersController {
   // PUT /users/:id → atualiza os dados de um usuário
   @Put(':id')
   update(@Param('id') id: string, @Body() user: Partial<User>) {
-    return this.usersService.update(Number(id), user);
+    return this.usersService.update(id, user);
   }
 
   // DELETE /users/:id → remove um usuário
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(Number(id));
+    return this.usersService.remove(id);
   }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Evento } from "./eventos.entity";
-import { Repository } from "typeorm";
-import { CreateEventoDto } from "./dto/create-evento-dto";
+import { IsNull, Repository } from "typeorm";
+import { CreateEventoDto } from "./dto-eventos/create-evento-dto";
 
 
 
@@ -15,10 +15,61 @@ export class EventosService {
     ) {}
 
     createEvento(evento: CreateEventoDto): Promise<Evento> {
-        // const novoEvento = this.eventosRepository.create(evento);
-        // return this.eventosRepository.save(novoEvento);
-
-        //CONTINUAR DAQUI... 
+        const novoEvento = this.eventosRepository.create(evento);
+         return this.eventosRepository.save(novoEvento);        
     }
+
+    async findAll (): Promise<Evento[]> {
+        const eventos = await this.eventosRepository.find({ where: { deletedAt: IsNull() } });
+        return eventos;
+    }
+
+    async findById(id: string): Promise<Evento | null> {
+        const evento = await this.eventosRepository.findOne({ 
+            where: { id, deletedAt: IsNull() }
+        });
+        return evento;
+    }  
+
+    async update(id: string, evento: Partial<Evento>): Promise<Evento> {
+    const eventoAtualizado = await this.eventosRepository.preload({
+        id,
+        ...evento
+    });
+    if (!eventoAtualizado) {
+        throw new Error('Evento não encontrado');
+    }
+    return this.eventosRepository.save(eventoAtualizado);   
 }
 
+    async softDelete(id: string): Promise<string> {
+        const evento = await this.findById(id);
+        if (!evento) {
+            throw new Error('Evento não encontrado');
+        }
+        await this.eventosRepository.softDelete(id);
+
+        return 'Evento excluído com sucesso';
+    }
+
+    // Rotas adicionais
+
+    async restore(id: string): Promise<string>{
+        const evento = await this.eventosRepository.restore(id);
+        if (!evento) {
+            throw new Error('Evento não encontrado');
+        }
+        return 'Evento restaurado com sucesso';
+    }
+    async findEventDestaque(): Promise<Evento[]> {
+        const eventos = await this.eventosRepository.find({
+            where: { destaque: true }
+        });
+        return eventos;
+    }
+
+    
+
+
+
+}

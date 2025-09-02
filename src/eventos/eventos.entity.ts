@@ -1,12 +1,12 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { EventoFoto } from "./eventos-fotos.entity";
-import { EventoVideo } from "./eventos-videos.entity";
+import { EventoFoto } from "./eventos-fotos/eventos-fotos.entity";
+import { EventoVideo } from "./eventos-videos/eventos-videos.entity";
 
 
 @Entity('eventos')
 export class Evento {
-   @PrimaryGeneratedColumn()
-   id: number;
+   @PrimaryGeneratedColumn('uuid')
+   id: string;
 
    @Column({ length: 100 })
    nome_evento: string;
@@ -16,6 +16,7 @@ export class Evento {
 
    @Column({ length: 255, nullable: true })
    inscricao: string;
+
 
    @Column({ length: 50, nullable: true })
   data_inicio_inscricao: string;
@@ -36,10 +37,10 @@ export class Evento {
   sobre_evento: string;
 
   @Column({ length: 255, nullable: true })
-  imagem: string;
+  imagensEvento: string;
 
-  @Column({ default: false })
-  destaque: boolean;
+ @Column({ default: false, nullable: true })
+destaque: boolean;
 
   @Column({ type: "date", nullable: true })
   dataInicio_evento: Date;
