@@ -14,22 +14,19 @@ export class EventosFotosService{
         private eventosRepository: Repository<Evento>,
     ) {}
 
-   async addFotos(eventoId: string, urls: string[]): Promise<EventoFoto[]> {
-        const evento = await this.eventosRepository.findOne({ where: { id: eventoId } });
-        if (!evento) throw new Error(`Evento com id ${eventoId} não encontrado`);
+   async addFotosFromFiles(eventoId: string, files: Express.Multer.File[]): Promise<EventoFoto[]> {
+    const evento = await this.eventosRepository.findOne({ where: { id: eventoId } });
+    if (!evento) throw new Error(`Evento com id ${eventoId} não encontrado`);
 
-        const novasFotos = urls.map(url => this.eventosFotosRepository.create({ evento, url }));
-        return this.eventosFotosRepository.save(novasFotos);
-    }
-
-    async addFoto(eventoId: string, url: string): Promise<EventoFoto> {
-        const evento = await this.eventosRepository.findOne({ where: { id: eventoId } });
-        if (!evento) throw new Error(`Evento com id ${eventoId} não encontrado`);
-
-        const novaFoto = this.eventosFotosRepository.create({ evento, url });
-        return this.eventosFotosRepository.save(novaFoto);
-    }
-
+    // Salva o caminho do arquivo (ou gere uma URL se for servir os arquivos)
+    const novasFotos = files.map(file =>
+        this.eventosFotosRepository.create({
+            evento,
+            url: file.path.replace(/\\/g, '/'), // ou gere uma URL pública se necessário
+        })
+    );
+    return this.eventosFotosRepository.save(novasFotos);
+}
     async findAll(): Promise<EventoFoto[]> {
         return this.eventosFotosRepository.find();
     }
