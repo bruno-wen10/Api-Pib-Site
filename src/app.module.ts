@@ -22,7 +22,8 @@ import { EventosModule } from './eventos/eventos.module';
     }),
     UsersModule,
     AuthModule, 
-    EventosModule
+    EventosModule,
+  
   ],
   controllers: [AppController],
   providers: [AppService],

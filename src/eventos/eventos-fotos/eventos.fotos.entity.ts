@@ -3,8 +3,8 @@ import { Evento } from "../eventos.entity";
 
 @Entity("eventos_fotos")
 export class EventoFoto {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ length: 255 })
   url: string;
@@ -16,12 +16,8 @@ export class EventoFoto {
   updatedAt: Date;
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt?: Date;
-        
-     
-  
-     
+  deletedAt?: Date;     
 
-  @ManyToOne(() => Evento, (evento) => evento.fotos, { onDelete: "CASCADE" })
+  @ManyToOne(() => Evento, (evento) => evento.fotos, { onDelete: "CASCADE", cascade: ['insert', 'update',] })
   evento: Evento;
 }

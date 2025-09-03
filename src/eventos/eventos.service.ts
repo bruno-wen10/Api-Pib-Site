@@ -15,18 +15,26 @@ export class EventosService {
     ) {}
 
     createEvento(evento: CreateEventoDto): Promise<Evento> {
-        const novoEvento = this.eventosRepository.create(evento);
+
+        const {fotos, videos, ...eventoData} = evento;
+
+        const novoEvento = this.eventosRepository.create({
+            ...eventoData,
+            fotos: fotos?.map(foto => ({ url: foto.url })) ,
+            videos: videos?.map(video => ({ url: video.url })) ,
+        });
          return this.eventosRepository.save(novoEvento);        
     }
 
     async findAll (): Promise<Evento[]> {
-        const eventos = await this.eventosRepository.find({ where: { deletedAt: IsNull() } });
+        const eventos = await this.eventosRepository.find({ where: { deletedAt: IsNull() }, relations: ['fotos', 'videos'] });
         return eventos;
     }
 
     async findById(id: string): Promise<Evento | null> {
-        const evento = await this.eventosRepository.findOne({ 
-            where: { id, deletedAt: IsNull() }
+        const evento = await this.eventosRepository.findOne({
+            where: { id, deletedAt: IsNull() },
+            relations: ['fotos', 'videos']
         });
         return evento;
     }  
@@ -41,6 +49,17 @@ export class EventosService {
     }
     return this.eventosRepository.save(eventoAtualizado);   
 }
+
+    async updatePartial(id: string, evento: Partial<Evento>): Promise<Evento> {
+        const eventoAtualizado = await this.eventosRepository.preload({
+            id,
+            ...evento
+        });
+        if (!eventoAtualizado) {
+            throw new Error('Evento não encontrado');
+        }
+        return this.eventosRepository.save(eventoAtualizado);
+    }
 
     async softDelete(id: string): Promise<string> {
         const evento = await this.findById(id);
@@ -63,7 +82,8 @@ export class EventosService {
     }
     async findEventDestaque(): Promise<Evento[]> {
         const eventos = await this.eventosRepository.find({
-            where: { destaque: true }
+            where: { destaque: true },
+            relations: ['fotos', 'videos']
         });
         return eventos;
     }

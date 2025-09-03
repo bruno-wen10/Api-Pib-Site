@@ -1,12 +1,7 @@
 import { IsNumber, IsString } from "class-validator";
 
 
-export class EventoFotosDto {
-    @IsNumber()
-    id: number;
-
-    @IsNumber()
-    eventoId: number;
+export class EventoFotosDto {   
     
    @IsString()
    url: string;

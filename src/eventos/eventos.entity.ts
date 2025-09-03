@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { EventoFoto } from "./eventos-fotos/eventos-fotos.entity";
+import { EventoFoto } from "./eventos-fotos/eventos.fotos.entity";
 import { EventoVideo } from "./eventos-videos/eventos-videos.entity";
 
 

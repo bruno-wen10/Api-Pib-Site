@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Put,
+  Patch,
 } from '@nestjs/common';
 import { EventosService } from './eventos.service';
 import { CreateEventoDto } from './dto-eventos/create-evento-dto';
@@ -37,6 +38,14 @@ findById(@Param('id') id: string): Promise<Evento | null> {
     @Body() evento: Partial<Evento>,
   ): Promise<Evento> {
     return this.eventosService.update(id, evento);
+  }
+
+  @Patch(':id')
+  async updatePartial(
+    @Param('id') id: string,
+    @Body() evento: Partial<Evento>,
+  ): Promise<Evento> {
+    return this.eventosService.updatePartial(id, evento);
   }
 
   @Delete(':id')
