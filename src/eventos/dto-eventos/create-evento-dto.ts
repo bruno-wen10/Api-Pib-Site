@@ -41,7 +41,7 @@ export class CreateEventoDto {
 
   @IsOptional()
   @IsString()
-  imagensEvento?: string;
+  imagemEvento?: string;
 
   @IsOptional()
   @IsBoolean()

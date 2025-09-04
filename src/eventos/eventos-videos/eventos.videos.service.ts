@@ -13,21 +13,22 @@ export class EventosVideosService {
         private eventosRepository: Repository<Evento>,
     ) {}
 
-    async addVideos(eventoId: string, urls: string[]): Promise<EventoVideo[]> {
+    async addVideos(eventoId: string, files: Express.Multer.File[]): Promise<EventoVideo[]> {
+
         const evento = await this.eventosRepository.findOne({ where: { id: eventoId } });
         if (!evento) throw new Error(`Evento com id ${eventoId} não encontrado`);
 
-        const novosVideos = urls.map(url => this.eventosVideosRepository.create({ evento, url }));
+        const novosVideos = files.map(file =>
+            this.eventosVideosRepository.create({
+                evento,
+                url: file.path.replace(/\\/g, '/'), // ou gere uma URL pública se necessário
+            })
+        )
+
         return this.eventosVideosRepository.save(novosVideos);
     }
 
-    async addVideo(eventoId: string, url: string): Promise<EventoVideo> {
-        const evento = await this.eventosRepository.findOne({ where: { id: eventoId } });
-        if (!evento) throw new Error(`Evento com id ${eventoId} não encontrado`);
-
-        const novoVideo = this.eventosVideosRepository.create({ evento, url });
-        return this.eventosVideosRepository.save(novoVideo);
-    }
+   
 
     async findAll(): Promise<EventoVideo[]> {
         return this.eventosVideosRepository.find({ relations: ['evento'] }); // pode se inserir relation para que as relações tão sejam listadas com a rota{ relations: ['evento'] }

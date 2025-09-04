@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EventosModule } from './eventos/eventos.module';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }), // lê .env
@@ -21,8 +22,9 @@ import { EventosModule } from './eventos/eventos.module';
       synchronize: true,
     }),
     UsersModule,
-    AuthModule, 
+    AuthModule,  
     EventosModule,
+   
   
   ],
   controllers: [AppController],

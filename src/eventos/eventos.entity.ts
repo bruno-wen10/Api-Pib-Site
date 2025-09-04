@@ -37,7 +37,7 @@ export class Evento {
   sobre_evento: string;
 
   @Column({ length: 255, nullable: true })
-  imagensEvento: string;
+  imagemEvento: string;
 
  @Column({ default: false, nullable: true })
 destaque: boolean;

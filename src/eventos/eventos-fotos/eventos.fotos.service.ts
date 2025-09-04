@@ -28,11 +28,11 @@ export class EventosFotosService{
     return this.eventosFotosRepository.save(novasFotos);
 }
     async findAll(): Promise<EventoFoto[]> {
-        return this.eventosFotosRepository.find();
+        return this.eventosFotosRepository.find({ relations: ['evento'] }); // pode se inserir relation para que as relações tão sejam listadas com a rota{ relations: ['evento'] }
     }
 
     async findById(id: string): Promise<EventoFoto | null> {
-        return this.eventosFotosRepository.findOne({ where: { id: id } });
+        return this.eventosFotosRepository.findOne({ where: { id: id }, relations: ['evento'] });
     }
 
     async delete(id: string): Promise<string> {

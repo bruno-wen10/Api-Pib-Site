@@ -16,10 +16,12 @@ export class EventosService {
 
     createEvento(evento: CreateEventoDto): Promise<Evento> {
 
+
         const {fotos, videos, ...eventoData} = evento;
 
         const novoEvento = this.eventosRepository.create({
             ...eventoData,
+            imagemEvento: eventoData.imagemEvento?.replace(/\\/g, '/'),
             fotos: fotos?.map(foto => ({ url: foto.url })) ,
             videos: videos?.map(video => ({ url: video.url })) ,
         });

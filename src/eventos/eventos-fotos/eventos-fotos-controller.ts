@@ -5,7 +5,6 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { extname } from "path";
 
-
 @Controller('eventos-fotos')
 export class EventosFotosController {
     constructor(private eventosFotosService: EventosFotosService) {}
@@ -14,7 +13,7 @@ export class EventosFotosController {
   @Post()
     @UseInterceptors(FilesInterceptor('fotos', 20, {
         storage: diskStorage({
-            destination: './uploads-fotos-eventos', // pasta irmã de src
+            destination: '../../../files-uplouds/fotos/uploads-fotos-evento', // pasta irmã de src
             filename: (req, file, cb) => {
                 // Gera um nome único para cada arquivo
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);

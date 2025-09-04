@@ -1,25 +1,37 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { EventosVideosService } from "./eventos.videos.service";
 import { EventoVideo } from "./eventos-videos.entity";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import { extname } from "path";
+import { diskStorage } from "multer";
 
 @Controller('eventos-videos')
-export class EventosVideosController {
+export class EventosVideosController { 
     constructor(private eventosVideosService: EventosVideosService) {}
 
     // Rota para adicionar um ou vários vídeos
     @Post()
+@UseInterceptors(FilesInterceptor('videos', 20, {
+  storage: diskStorage({
+    destination: '../../../files-uplouds/videos/uploads-videos-evento', // pasta irmã de src
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, uniqueSuffix + extname(file.originalname));
+    },
+  }),
+}))
+
     async addVideoOuVideos(
-        @Body() body: { eventoId: string; url?: string; urls?: string[] }
+        @Body() body: { eventoId: string },
+        @UploadedFiles() files: Express.Multer.File[]
     ): Promise<EventoVideo | EventoVideo[]> {
-        if (body.urls && body.urls.length > 0) {
-            return Promise.all(
-                body.urls.map(url => this.eventosVideosService.addVideo(body.eventoId, url))
-            );
+        if(!body.eventoId) {
+            throw new Error('Evento ID é necessário');
         }
-        if (body.url) {
-            return this.eventosVideosService.addVideo(body.eventoId, body.url);
+        if(!files || files.length === 0) {
+            throw new Error('É necessário enviar pelo menos um vídeo');
         }
-        throw new Error('É necessário enviar pelo menos uma URL ou um array de URLs');
+        return this.eventosVideosService.addVideos(body.eventoId, files)
     }
 
     @Get()

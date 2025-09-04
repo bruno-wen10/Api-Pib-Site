@@ -7,18 +7,37 @@ import {
   Delete,
   Put,
   Patch,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { EventosService } from './eventos.service';
 import { CreateEventoDto } from './dto-eventos/create-evento-dto';
 import { Evento } from './eventos.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('eventos')
 export class EventosController {
   constructor(private readonly eventosService: EventosService) {}
 
   @Post()
-  create(@Body() eventoDto: CreateEventoDto): Promise<Evento> {
-    return this.eventosService.createEvento(eventoDto);
+   @UseInterceptors(FileInterceptor('imagemEvento', {
+    storage: require('multer').diskStorage({
+      destination: '../../files-uplouds/imagens',
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
+      }
+    })
+   }))
+  create(
+    @Body() eventoDto: CreateEventoDto,
+    @UploadedFile() imagemEvento: Express.Multer.File
+  ): Promise<Evento> {
+
+    if (imagemEvento) {
+    eventoDto.imagemEvento = imagemEvento.filename; // <- salva o nome do arquivo no DTO
+  }
+  return this.eventosService.createEvento(eventoDto);
   }
 
   @Get()
