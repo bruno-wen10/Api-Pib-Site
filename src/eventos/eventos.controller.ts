@@ -22,7 +22,7 @@ export class EventosController {
   @Post()
    @UseInterceptors(FileInterceptor('imagemEvento', {
     storage: require('multer').diskStorage({
-      destination: '../../files-uplouds/imagens',
+      destination: '../../files-uplouds/imagens/imagem-eventos',
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
         cb(null, uniqueSuffix + '-' + file.originalname);

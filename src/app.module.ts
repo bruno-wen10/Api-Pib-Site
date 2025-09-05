@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EventosModule } from './eventos/eventos.module';
+import { MinisterioModule } from './ministerio/ministerio.module';
 
 
 @Module({
@@ -24,8 +25,7 @@ import { EventosModule } from './eventos/eventos.module';
     UsersModule,
     AuthModule,  
     EventosModule,
-   
-  
+    MinisterioModule
   ],
   controllers: [AppController],
   providers: [AppService],

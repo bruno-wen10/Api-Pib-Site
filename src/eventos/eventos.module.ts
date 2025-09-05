@@ -18,7 +18,7 @@ import { EventosVideosController } from "./eventos-videos/eventos.videos.control
         EventoVideo
     ])],
         controllers: [EventosController, EventosFotosController, EventosVideosController],
-        providers: [EventosService, EventosVideosService, EventosFotosService, EventosVideosService],
+        providers: [EventosService, EventosVideosService, EventosFotosService],
         exports: [EventosService],
 })
 

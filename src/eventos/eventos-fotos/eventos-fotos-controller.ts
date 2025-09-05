@@ -1,40 +1,52 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
-import { EventoFoto } from "./eventos.fotos.entity";
-import { EventosFotosService } from "./eventos.fotos.service";
+// eventos-fotos/eventos.fotos.controller.ts
+
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFiles,
+  UseInterceptors,
+  BadRequestException,
+  ParseUUIDPipe,
+} from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
-import { extname } from "path";
+import { extname, join } from "path"; // 1. Importe 'join' do módulo 'path'
+import { EventoFoto } from "./eventos.fotos.entity";
+import { EventosFotosService } from "./eventos.fotos.service";
 
 @Controller('eventos-fotos')
 export class EventosFotosController {
     constructor(private eventosFotosService: EventosFotosService) {}
 
-// Rota para adicionar uma ou várias fotos
-  @Post()
+    @Post()
     @UseInterceptors(FilesInterceptor('fotos', 20, {
         storage: diskStorage({
-            destination: '../../../files-uplouds/fotos/uploads-fotos-evento', // pasta irmã de src
+            // 2. Use path.join e process.cwd() para criar um caminho absoluto e seguro
+            destination: join(process.cwd(), 'files-uploads', 'fotos', 'uploads-fotos-evento'),
             filename: (req, file, cb) => {
-                // Gera um nome único para cada arquivo
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
                 cb(null, uniqueSuffix + extname(file.originalname));
             }
         })
-    })) // 'fotos' é o nome do campo no form-data
-    
+    }))
     async addFotoOuFotos(
-        @Body() body: { eventoId: string },
+        @Body('eventoId', ParseUUIDPipe) eventoId: string, // 3. Extraia e valide o eventoId diretamente
         @UploadedFiles() files: Express.Multer.File[]
     ): Promise<EventoFoto[]> {
-        if (!body.eventoId) {
-            throw new Error('O eventoId é obrigatório');
-        }
         if (!files || files.length === 0) {
-            throw new Error('É necessário enviar pelo menos uma foto');
+            // 4. Use exceções HTTP padrão do NestJS
+            throw new BadRequestException('É necessário enviar pelo menos uma foto');
         }
-        // Salva as fotos recebidas via upload
-        return this.eventosFotosService.addFotosFromFiles(body.eventoId, files);
+        
+        return this.eventosFotosService.addFotosFromFiles(eventoId, files);
     }
+
+    // --- Demais rotas (com validação de UUID adicionada) ---
 
     @Get()
     async findAll(): Promise<EventoFoto[]> {
@@ -42,17 +54,22 @@ export class EventosFotosController {
     }
 
     @Get(':id')
-    async findById(@Param('id') id: string): Promise<EventoFoto | null> {
+    async findById(@Param('id', ParseUUIDPipe) id: string): Promise<EventoFoto | null> {
         return this.eventosFotosService.findById(id);
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: string): Promise<string> {
+    async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
+        // Lembrete: Esta ação apaga apenas a referência no banco de dados.
+        // O arquivo físico continua no servidor.
         return this.eventosFotosService.delete(id);
     }
 
     @Patch(':id')
-    async update(@Param('id') id: string, @Body() body: { url: string }): Promise<EventoFoto | null> {
-        return this.eventosFotosService.updateFotos(id, body.url);
+    async update(
+        @Param('id', ParseUUIDPipe) id: string,
+        @Body('url') url: string
+    ): Promise<EventoFoto | null> {
+        return this.eventosFotosService.updateFotos(id, url);
     }
 }
