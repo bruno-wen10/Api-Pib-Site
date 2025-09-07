@@ -9,6 +9,9 @@ import { CreateEventoDto } from "./dto-eventos/create-evento-dto";
 
 @Injectable()
 export class EventosService {
+    hardDelete(id: string) {
+      throw new Error('Method not implemented.');
+    }
     constructor(
         @InjectRepository(Evento)
         private eventosRepository: Repository<Evento>,
@@ -63,17 +66,15 @@ export class EventosService {
         return this.eventosRepository.save(eventoAtualizado);
     }
 
-    async softDelete(id: string): Promise<string> {
+  
+      async Delete(id: string): Promise<string> {
         const evento = await this.findById(id);
         if (!evento) {
             throw new Error('Evento não encontrado');
         }
-        await this.eventosRepository.softDelete(id);
-
+        await this.eventosRepository.remove(evento);
         return 'Evento excluído com sucesso';
     }
-
-    // Rotas adicionais
 
     async restore(id: string): Promise<string>{
         const evento = await this.eventosRepository.restore(id);
