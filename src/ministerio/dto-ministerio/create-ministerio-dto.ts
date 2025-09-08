@@ -1,4 +1,6 @@
-import { IsOptional, IsString } from "class-validator";
+import { IsOptional, IsString, ValidateNested } from "class-validator";
+import { MinisterioFotosDto } from "../ministerio-fotos/dto-ministerio-fotos/ministerio-fotos-dto";
+import { Type } from "class-transformer";
 
 
 
@@ -50,6 +52,11 @@ export class CreateMinisterioDto {
     @IsOptional()
     @IsString()
     redes_sociais?: string;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => MinisterioFotosDto)
+    fotos?: MinisterioFotosDto[];
 
     
 

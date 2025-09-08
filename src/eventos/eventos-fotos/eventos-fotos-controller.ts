@@ -46,7 +46,7 @@ export class EventosFotosController {
         return this.eventosFotosService.addFotosFromFiles(eventoId, files);
     }
 
-    // --- Demais rotas (com validação de UUID adicionada) ---
+
 
     @Get()
     async findAll(): Promise<EventoFoto[]> {

@@ -9,9 +9,7 @@ import { CreateEventoDto } from "./dto-eventos/create-evento-dto";
 
 @Injectable()
 export class EventosService {
-    hardDelete(id: string) {
-      throw new Error('Method not implemented.');
-    }
+    
     constructor(
         @InjectRepository(Evento)
         private eventosRepository: Repository<Evento>,

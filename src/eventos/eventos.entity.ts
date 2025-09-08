@@ -28,10 +28,10 @@ export class Evento {
   local: string;
 
   @Column("text", { nullable: true })
-  descricao: string;
+  descricao_curta: string;
 
   @Column('text', { nullable: true })
-  descricao_evento: string;
+  descricao_completa: string;
 
   @Column("text", { nullable: true })
   sobre_evento: string;
@@ -40,13 +40,13 @@ export class Evento {
   imagemEvento: string;
 
  @Column({ default: false, nullable: true })
-destaque: boolean;
+ destaque: boolean;
 
-  @Column({ type: "date", nullable: true })
-  dataInicio_evento: Date;
+  @Column({  nullable: true })
+  dataInicio_evento: string;
 
-  @Column({ type: "date", nullable: true })
-  dataFim_evento: Date;
+  @Column({  nullable: true })
+  dataFim_evento: string;
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;

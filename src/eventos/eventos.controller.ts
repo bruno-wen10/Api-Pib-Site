@@ -12,37 +12,37 @@ export class EventosController {
   constructor(private readonly eventosService: EventosService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('imagemEvento', {
-    storage: diskStorage({
-      destination: (req, file, cb) => {
-        const uploadPath = join(process.cwd(), 'files-uploads', 'imagens', 'imagens-eventos');
-        console.log('Multer Destination Path:', uploadPath); // Log de depuração
-        if (!existsSync(uploadPath)) {
-          console.log('Creating directory:', uploadPath); // Log de depuração
-          mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const fileName = `${uniqueSuffix}${extname(file.originalname)}`;
-        console.log('Multer Filename:', fileName); // Log de depuração
-        cb(null, fileName);
+@UseInterceptors(FileInterceptor('imagemEvento', {
+  storage: diskStorage({
+    destination: (req, file, cb) => {
+      const uploadPath = join(process.cwd(), 'files-uploads', 'imagens', 'imagens-eventos');
+      if (!existsSync(uploadPath)) {
+        mkdirSync(uploadPath, { recursive: true });
       }
-    }),
-   
-  }))
-  create(
-    @Body() eventoDto: CreateEventoDto,
-    @UploadedFile() imagemEvento: Express.Multer.File
-  ): Promise<Evento> {
-    if (!imagemEvento) {
-      throw new HttpException('Nenhuma imagem foi enviada.', HttpStatus.BAD_REQUEST);
+      cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileName = `${uniqueSuffix}${extname(file.originalname)}`;
+      cb(null, fileName);
     }
-    console.log('Uploaded file details:', imagemEvento); // Log de depuração
-    eventoDto.imagemEvento = imagemEvento.filename;
-    return this.eventosService.createEvento(eventoDto);
+  }),
+}))
+async create(
+  @Body() eventDto: CreateEventoDto,
+  @UploadedFile() imagemEvento?: Express.Multer.File, // opcional
+): Promise<Evento> {
+
+  if (imagemEvento) {
+    console.log('Uploaded file details:', imagemEvento);
+    eventDto.imagemEvento = imagemEvento.filename;  // <-- só seta se existir
+  } else {
+    console.log('Nenhuma imagem foi enviada, continuando sem imagem.');
   }
+
+  return this.eventosService.createEvento(eventDto);
+}
+
 
   @Get()
   findAll(): Promise<Evento[]> {

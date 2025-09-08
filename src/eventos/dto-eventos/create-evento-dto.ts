@@ -3,7 +3,8 @@ import {
   IsOptional, 
   IsBoolean, 
   IsDate, 
-  ValidateNested 
+  ValidateNested, 
+  isString
 } from 'class-validator';
 import { EventoFotosDto } from '../eventos-fotos/dto-eventos-fotos/eventos-fotos-dto';
 import { EventoVideosDto } from '../eventos-videos/dto-eventos/eventos-videos-dto';
@@ -22,18 +23,22 @@ export class CreateEventoDto {
 
   @IsOptional()
   @IsString()
-  data_evento_inicio_inscricao?: string;
+  data_inicio_inscricao?: string;
 
   @IsOptional()
   @IsString()
-  data_evento_fim_inscricao?: string;
+  data_fim_inscricao?: string;
 
   @IsString()
   local: string;
 
   @IsOptional()
   @IsString()
-  descricao?: string;
+  descricao_curta?: string;
+
+  @IsOptional()
+  @IsString()
+  descricao_completa?: string;
 
   @IsOptional()
   @IsString()
@@ -48,12 +53,12 @@ export class CreateEventoDto {
   destaque?: boolean;
 
   @IsOptional()
-  @IsDate()
-  dataInicio_evento?: Date;
+  @IsString()
+  dataInicio_evento?: string;
 
   @IsOptional()
-  @IsDate()
-  dataFim_evento?: Date;
+  @IsString()
+  dataFim_evento?: string;
 
   @IsOptional()
   @ValidateNested({ each: true })

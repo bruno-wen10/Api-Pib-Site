@@ -23,10 +23,10 @@ export class Ministerio {
     descricao_atividade?: string;
 
     @Column({ length: 255, nullable: true })
-    descrição_curta?: string;
+    descricao_curta?: string;
 
     @Column({ type: 'text', nullable: true })
-    descrição_completa?: string;
+    descricao_completa?: string;
 
     @Column({ length: 255, nullable: true })
     imagem_banner?: string;
