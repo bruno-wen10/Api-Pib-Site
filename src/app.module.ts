@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EventosModule } from './eventos/eventos.module';
 import { MinisterioModule } from './ministerio/ministerio.module';
+import { MuralOracaoModule } from './mural-oracao/muralOracao.module';
 
 
 @Module({
@@ -25,7 +26,8 @@ import { MinisterioModule } from './ministerio/ministerio.module';
     UsersModule,
     AuthModule,  
     EventosModule,
-    MinisterioModule
+    MinisterioModule,
+    MuralOracaoModule
   ],
   controllers: [AppController],
   providers: [AppService],
