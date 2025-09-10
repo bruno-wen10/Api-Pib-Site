@@ -19,7 +19,7 @@ import { diskStorage } from "multer";
 import { extname, join } from "path";
 import { existsSync, mkdirSync } from "fs";
 
-@Controller("ministerio")
+@Controller("ministerios")
 export class MinisterioController {
   constructor(private readonly ministerioService: MinisterioService) {}
 
@@ -62,9 +62,12 @@ export class MinisterioController {
       logo_ministerio?: Express.Multer.File[];
     }
   ) {
-    console.log("=== ROTA /ministerio CHAMADA ===");
-    console.log("BODY:", createMinisterioDto);
-    console.log("FILES RECEBIDOS:", files);
+    if (files?.imagem_banner?.[0]) {
+      createMinisterioDto.imagem_banner = `/uploads/imagens/imagens-ministerio/${files.imagem_banner[0].filename}`;
+    }
+    if (files?.logo_ministerio?.[0]) {
+      createMinisterioDto.logo_ministerio = `/uploads/imagens/imagens-ministerio/${files.logo_ministerio[0].filename}`;
+    }
 
     return this.ministerioService.CreateMinisterio(
       createMinisterioDto,

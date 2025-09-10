@@ -28,10 +28,8 @@ export class Evento {
   local: string;
 
   @Column("text", { nullable: true })
-  descricao_curta: string;
+  descricao: string;
 
-  @Column('text', { nullable: true })
-  descricao_completa: string;
 
   @Column("text", { nullable: true })
   sobre_evento: string;

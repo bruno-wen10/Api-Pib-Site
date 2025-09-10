@@ -9,6 +9,7 @@ import { join } from "path";
 @Injectable()
 export class MinisterioFotosService {
   private readonly logger = new Logger(MinisterioFotosService.name);
+    private readonly backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
 
   constructor(
     @InjectRepository(MinisterioFotos)
@@ -19,20 +20,15 @@ export class MinisterioFotosService {
   ) {}    
 
   async addFotosFromFiles(ministerioId: string, files: Express.Multer.File[]): Promise<MinisterioFotos[]> {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(ministerioId)) {
-      throw new BadRequestException('ministerioId deve ser um UUID válido');
-    }
 
     const ministerio = await this.ministerioRepository.findOne({ where: { id: ministerioId } });
-    if (!ministerio) {
-      throw new NotFoundException(`Ministério com id ${ministerioId} não encontrado`);
-    }
 
+    if (!ministerio) throw new NotFoundException(`Ministério com id ${ministerioId} não encontrado`);
+     
     const novasFotos = files.map(file =>
       this.ministerioFotosRepository.create({
         ministerio,
-        url: file.path, // Mantém o caminho completo gerado pelo multer
+        url: `${this.backendUrl}/uploads/fotos/uplaud-fotos-ministerios/${file.filename}`,
       })
     );
     return this.ministerioFotosRepository.save(novasFotos);

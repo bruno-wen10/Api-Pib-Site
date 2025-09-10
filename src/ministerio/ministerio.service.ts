@@ -6,33 +6,37 @@ import { Ministerio } from './ministerio.intity';
 
 @Injectable()
 export class MinisterioService {
-  updateParcial(id: string, ministerio: Partial<Ministerio>) {
-    throw new Error("Method not implemented.");
-  }
+   private readonly backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
+
   constructor(
     @InjectRepository(Ministerio)
     private ministerioRepository: Repository<Ministerio>,
   ) {}
 
   async CreateMinisterio(
-    ministerioDto: CreateMinisterioDto,
-    imagemBanner?: Express.Multer.File,
-    logoMinisterio?: Express.Multer.File,
-  ): Promise<Ministerio> {
-    // Se imagens foram enviadas via FormData → sobrescreve
-    if (imagemBanner) {
-      ministerioDto.imagem_banner = imagemBanner.filename;
-    }
-    if (logoMinisterio) {
-      ministerioDto.logo_ministerio = logoMinisterio.filename;
-    }
+  ministerioDto: CreateMinisterioDto,
+  imagemBanner?: Express.Multer.File,
+  logoMinisterio?: Express.Multer.File,
+): Promise<Ministerio> {
 
-    const novoMinisterio = this.ministerioRepository.create({
-      ...ministerioDto,
-    });
+  const { fotos, ...ministerioData } = ministerioDto;
 
-    return this.ministerioRepository.save(novoMinisterio);
-  }
+  const novoMinisterio = this.ministerioRepository.create({
+    ...ministerioData,
+    imagem_banner: ministerioData.imagem_banner
+      ? `${this.backendUrl}${ministerioData.imagem_banner.replace(/\\/g, "/")}`
+      : undefined,
+
+    logo_ministerio: ministerioData.logo_ministerio
+      ? `${this.backendUrl}${ministerioData.logo_ministerio.replace(/\\/g, "/")}`
+      : undefined,
+      
+    fotos: fotos?.map((foto) => ({ url: `${this.backendUrl}${foto.url}` })),
+  });
+
+  return this.ministerioRepository.save(novoMinisterio);
+}
+
 
   async findAll(): Promise<Ministerio[]> {
     return this.ministerioRepository.find({ relations: ['fotos'] });

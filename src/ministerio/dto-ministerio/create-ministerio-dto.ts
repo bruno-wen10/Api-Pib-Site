@@ -17,17 +17,14 @@ export class CreateMinisterioDto {
     @IsString()
     funcoes_ministerio?: string;
 
-    @IsOptional()
-    @IsString()
-    descricao_atividade?: string;
 
     @IsOptional()
     @IsString()
-    descricao_curta?: string;
+    descricao_ministerio?: string;
 
     @IsOptional()
     @IsString()
-    descricao_completa?: string;
+    sobre_ministerio?: string;
 
     @IsOptional()
     @IsString()
@@ -48,6 +45,12 @@ export class CreateMinisterioDto {
     @IsOptional()
     @IsString()
     contato_telefone?: string;
+
+
+
+    @IsOptional()
+    @IsString()
+    encontros?: string;
 
     @IsOptional()
     @IsString()

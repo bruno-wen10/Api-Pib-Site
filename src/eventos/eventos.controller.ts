@@ -11,7 +11,7 @@ import { existsSync, mkdirSync } from 'fs';
 export class EventosController {
   constructor(private readonly eventosService: EventosService) {}
 
-  @Post()
+ @Post()
 @UseInterceptors(FileInterceptor('imagemEvento', {
   storage: diskStorage({
     destination: (req, file, cb) => {
@@ -23,25 +23,20 @@ export class EventosController {
     },
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const fileName = `${uniqueSuffix}${extname(file.originalname)}`;
-      cb(null, fileName);
+      cb(null, uniqueSuffix + extname(file.originalname));
     }
   }),
 }))
 async create(
   @Body() eventDto: CreateEventoDto,
-  @UploadedFile() imagemEvento?: Express.Multer.File, // opcional
+  @UploadedFile() imagemEvento?: Express.Multer.File,
 ): Promise<Evento> {
-
   if (imagemEvento) {
-    console.log('Uploaded file details:', imagemEvento);
-    eventDto.imagemEvento = imagemEvento.filename;  // <-- só seta se existir
-  } else {
-    console.log('Nenhuma imagem foi enviada, continuando sem imagem.');
+    eventDto.imagemEvento = `/uploads/imagens/imagens-eventos/${imagemEvento.filename}`;
   }
-
   return this.eventosService.createEvento(eventDto);
 }
+
 
 
   @Get()
@@ -50,25 +45,19 @@ async create(
   }
 
   @Get(':id')
-  findById(@Param(':id') id: string): Promise<Evento | null> {
+  findById(@Param('id') id: string): Promise<Evento | null> {
     return this.eventosService.findById(id);
   }
 
-  @Put(':id')
-  update(
-    @Param(':id') id: string,
-    @Body() evento: Partial<Evento>,
-  ): Promise<Evento> {
-    return this.eventosService.update(id, evento);
-  }
+ 
 
-  @Patch(':id')
-  async updatePartial(
-    @Param(':id') id: string,
-    @Body() evento: Partial<Evento>,
-  ): Promise<Evento> {
-    return this.eventosService.updatePartial(id, evento);
-  }
+@Patch(':id')
+async updatePartial(
+  @Param('id') id: string,  
+  @Body() evento: Partial<Evento>,
+): Promise<Evento> {
+  return this.eventosService.update(id, evento);
+}
 
  @Delete(':id')
 async Delete(@Param('id') id: string): Promise<{ message: string }> {

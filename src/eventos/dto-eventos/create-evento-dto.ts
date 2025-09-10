@@ -34,11 +34,7 @@ export class CreateEventoDto {
 
   @IsOptional()
   @IsString()
-  descricao_curta?: string;
-
-  @IsOptional()
-  @IsString()
-  descricao_completa?: string;
+  descricao?: string;
 
   @IsOptional()
   @IsString()

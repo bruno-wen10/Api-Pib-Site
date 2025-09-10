@@ -17,16 +17,16 @@ export class Ministerio {
     slug?: string;
 
     @Column({ length: 100, nullable: true })
+    lideranca_responsavel?: string;
+
+    @Column({ length: 100, nullable: true })
     funcoes_ministerio?: string;
 
     @Column({ length: 255, nullable: true })
-    descricao_atividade?: string;
-
-    @Column({ length: 255, nullable: true })
-    descricao_curta?: string;
+    descricao_ministerio?: string;
 
     @Column({ type: 'text', nullable: true })
-    descricao_completa?: string;
+    sobre_ministerio?: string;
 
     @Column({ length: 255, nullable: true })
     imagem_banner?: string;
@@ -35,13 +35,13 @@ export class Ministerio {
     logo_ministerio?: string;
 
     @Column({ length: 100, nullable: true })
-    lideranca_responsavel?: string;
-
-    @Column({ length: 100, nullable: true })
     contato_email?: string;
 
     @Column({ length: 100, nullable: true })
     contato_telefone?: string;
+
+    @Column({ length: 255, nullable: true })
+    encontros?: string;
 
     @Column({ length: 255, nullable: true })
     redes_sociais?: string;
@@ -56,8 +56,7 @@ export class Ministerio {
     deletedAt?: Date;
 
     @OneToMany(() => MinisterioFotos, (foto) => foto.ministerio, { cascade: true })
-    fotos: MinisterioFotos[]; 
-      
+    fotos: MinisterioFotos[];   
     
 
 
