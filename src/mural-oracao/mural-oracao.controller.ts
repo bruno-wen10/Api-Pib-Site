@@ -21,7 +21,7 @@ export class MuralOracaoController {
 
   @Get(':id')
   findOne(@Param('id') id: string): Promise<MuralOracao> {
-    return this.muralOracaoService.findOne(id);
+    return this.muralOracaoService.findOneById(id);
   }
 
   @Put(':id')

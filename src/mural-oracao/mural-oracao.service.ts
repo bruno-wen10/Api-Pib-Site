@@ -25,7 +25,7 @@ export class MuralOracaoService {
   }
 
   // Buscar por id
-  async findOne(id: string): Promise<MuralOracao> {
+  async findOneById(id: string): Promise<MuralOracao> {
     const muralOracao = await this.muralOracaoRepository.findOne({ where: { id } });
     if (!muralOracao) {
       throw new NotFoundException(`Pedido de oração com id ${id} não encontrado`);
@@ -35,7 +35,7 @@ export class MuralOracaoService {
 
   // Atualizar
   async update(id: string, updateMuralOracaoDto: UpdateMuralOracaoDto): Promise<MuralOracao> {
-    const muralOracao = await this.findOne(id);
+    const muralOracao = await this.findOneById(id);
     Object.assign(muralOracao, updateMuralOracaoDto);
     return this.muralOracaoRepository.save(muralOracao);
   }
