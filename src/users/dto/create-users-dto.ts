@@ -1,40 +1,28 @@
 import { IsBoolean, IsDate, IsEmail, IsString } from "class-validator";
 
+export class CreateUserDto {
+  @IsString()
+  name: string;
 
+  @IsEmail()
+  email: string;
 
-export class CreateUserDto{
-    @IsString()
-    name: string;
+  @IsString()
+  password: string;
 
-    @IsEmail()
-    email: string;
+  @IsString()
+  perfil: string;
 
-    @IsString()
-    password: string;
+  @IsBoolean()
+  userAdmin: boolean;
 
-    @IsString()
-    perfil: string;
+  @IsString()
+  telefone: string;
 
-    @IsBoolean()
-    userAdmin: boolean;
-
-    @IsString()
-    telefone: string;
-
-   @IsDate()
-  dateNascimento: Date;
+ @IsString()
+dateNascimento: string;
 
   @IsBoolean()
   politicasLGPD: boolean;
-  
-  @IsDate()
-  createdAt: Date; 
-
-  @IsDate()
-  updatedAt: Date;
-
-  @IsDate()
-  deletedAt: Date;
-
 }
 

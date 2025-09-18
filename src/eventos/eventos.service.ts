@@ -13,21 +13,10 @@ export class EventosService {
     private eventosRepository: Repository<Evento>,
   ) {}
 
-  createEvento(evento: CreateEventoDto): Promise<Evento> {
-    const { fotos, videos, ...eventoData } = evento;
-
-    const novoEvento = this.eventosRepository.create({
-      ...eventoData,
-      imagemEvento: eventoData.imagemEvento
-        ? `${this.backendUrl}${eventoData.imagemEvento.replace(/\\/g, "/")}`
-        : undefined,
-        
-      fotos: fotos?.map((foto) => ({ url: `${this.backendUrl}${foto.url}` })),
-      videos: videos?.map((video) => ({ url: video.url })),
-    });
-
-    return this.eventosRepository.save(novoEvento);
-  }
+   async CreateEvento(eventoDto: CreateEventoDto): Promise<Evento> {
+      const novoEvento = this.eventosRepository.create(eventoDto);
+      return this.eventosRepository.save(novoEvento);
+    }
 
   async findAll(): Promise<Evento[]> {
     return this.eventosRepository.find({

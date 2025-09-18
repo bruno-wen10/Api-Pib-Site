@@ -3,10 +3,10 @@ import { UsersService } from './user.service';
 import { User } from './users.entity';
 import { CreateUserDto } from './dto/create-users-dto';
 
-// Define a rota base para esse controller: /users
+
 @Controller('users')
 export class UsersController {
-  // O controller usa o UsersService para acessar o banco
+  
   constructor(private readonly usersService: UsersService) {}
 
   // POST /users → cria um novo usuário

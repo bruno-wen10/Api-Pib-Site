@@ -10,8 +10,8 @@ async function bootstrap() {
 
   // 🔹 Habilitar CORS
   app.enableCors({
-    origin: 'http://localhost:5173', // libera apenas o front
-    credentials: true, // se precisar enviar cookies/autenticação
+    origin: ['http://localhost:5173', 'http://localhost:5174'] ,
+    credentials: true, 
   });
 
   // 🔹 Pipes globais

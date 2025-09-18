@@ -1,75 +1,64 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateMinisterioDto } from './dto-ministerio/create-ministerio-dto';
 import { Ministerio } from './ministerio.intity';
 
 @Injectable()
 export class MinisterioService {
-   private readonly backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
-
   constructor(
     @InjectRepository(Ministerio)
     private ministerioRepository: Repository<Ministerio>,
   ) {}
 
-  async CreateMinisterio(
-  ministerioDto: CreateMinisterioDto,
-  imagemBanner?: Express.Multer.File,
-  logoMinisterio?: Express.Multer.File,
-): Promise<Ministerio> {
+  /**
+   * MÉTODO CREATE CORRIGIDO
+   * Agora ele é muito mais simples. Ele recebe o DTO do controller,
+   * que já contém as URLs completas para o banner e o logo.
+   * Ele não precisa mais saber sobre arquivos.
+   */
+  async CreateMinisterio(ministerioDto: CreateMinisterioDto): Promise<Ministerio> {
+    const novoMinisterio = this.ministerioRepository.create(ministerioDto);
+    return this.ministerioRepository.save(novoMinisterio);
+  }
 
-  const { fotos, ...ministerioData } = ministerioDto;
+  /**
+   * MÉTODO UPDATE CORRIGIDO
+   * Também foi simplificado. O controller prepara o DTO parcial com as
+   * novas URLs, e o service apenas aplica a atualização.
+   */
+  async update(id: string, updateDto: Partial<CreateMinisterioDto>): Promise<Ministerio> {
+    const ministerio = await this.ministerioRepository.preload({
+      id,
+      ...updateDto,
+    });
 
-  const novoMinisterio = this.ministerioRepository.create({
-    ...ministerioData,
-    imagem_banner: ministerioData.imagem_banner
-      ? `${this.backendUrl}${ministerioData.imagem_banner.replace(/\\/g, "/")}`
-      : undefined,
+    if (!ministerio) {
+      throw new NotFoundException(`Ministério com ID ${id} não encontrado`);
+    }
 
-    logo_ministerio: ministerioData.logo_ministerio
-      ? `${this.backendUrl}${ministerioData.logo_ministerio.replace(/\\/g, "/")}`
-      : undefined,
-      
-    fotos: fotos?.map((foto) => ({ url: `${this.backendUrl}${foto.url}` })),
-  });
-
-  return this.ministerioRepository.save(novoMinisterio);
-}
-
+    return this.ministerioRepository.save(ministerio);
+  }
 
   async findAll(): Promise<Ministerio[]> {
     return this.ministerioRepository.find({ relations: ['fotos'] });
   }
 
   async findById(id: string): Promise<Ministerio | null> {
-    return this.ministerioRepository.findOne({ where: { id }, relations: ['fotos'] });
-  }
-
-
-
- async update(id: string, ministerio: Partial<Ministerio>): Promise<Ministerio> {
-    const ministerioAtualizado = await this.ministerioRepository.preload({
-      id,
-      ...ministerio,
-    });
-
-    if (!ministerioAtualizado) {
-      throw new NotFoundException('Ministerio não encontrado');
+    const ministerio = await this.ministerioRepository.findOne({ where: { id }, relations: ['fotos'] });
+    if (!ministerio) {
+      throw new NotFoundException(`Ministério com ID ${id} não encontrado`);
     }
-
-    return this.ministerioRepository.save(ministerioAtualizado);
+    return ministerio;
   }
-
 
   async delete(id: string): Promise<{ message: string }> {
-    const ministerio = await this.ministerioRepository.findOneBy({ id });
+    const result = await this.ministerioRepository.delete(id);
 
-    if (!ministerio) {
-      throw new Error('Ministerio não encontrado');
+    if (result.affected === 0) {
+      throw new NotFoundException(`Ministério com ID ${id} não encontrado`);
     }
-
-    await this.ministerioRepository.remove(ministerio);
-    return { message: 'Ministerio deletado com sucesso' };
+    
+    return { message: 'Ministério deletado com sucesso' };
   }
 }

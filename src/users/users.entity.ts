@@ -26,8 +26,9 @@ export class User{
     @Column()
     telefone: string;
 
-    @Column()
-    dateNascimento: Date;
+   @Column({ type: 'varchar', length: 10, nullable: true })
+    dateNascimento: string;
+
 
     @Column()
     politicasLGPD: boolean;
