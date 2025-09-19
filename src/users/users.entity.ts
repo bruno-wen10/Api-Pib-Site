@@ -1,44 +1,48 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-
-
-
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
-export class User{
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+export class User {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column({unique: true})
-    email: string;
+  @Column({ unique: true })
+  email: string;
 
-    @Column()
-    password: string ;
+  @Column()
+  password: string;
 
-    @Column()
-    perfil: string;
+  @Column()
+  membro: boolean;
 
-    @Column()
-    userAdmin: boolean;
+  @Column()
+  telefone: string;
 
-    @Column()
-    telefone: string;
+  @Column({ type: 'varchar', length: 10, nullable: true })
+  dateNascimento: string;
 
-   @Column({ type: 'varchar', length: 10, nullable: true })
-    dateNascimento: string;
+  @Column({ default: false }) // É melhor ter um default
+  politicasLGPD: boolean;
 
+  // JSON com permissões por rota
+  @Column('json', { default: {} })
+  permissions: Record<string, boolean>;
 
-    @Column()
-    politicasLGPD: boolean;
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date;
 
-    @DeleteDateColumn({ nullable: true })
-    deletedAt?: Date;
-    
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { EventosModule } from './eventos/eventos.module';
 import { MinisterioModule } from './ministerio/ministerio.module';
 import { MuralOracaoModule } from './mural-oracao/muralOracao.module';
+import { VisitanteModule } from './visitantes/visitante.module';
 
 
 @Module({
@@ -27,7 +28,8 @@ import { MuralOracaoModule } from './mural-oracao/muralOracao.module';
     AuthModule,  
     EventosModule,
     MinisterioModule,
-    MuralOracaoModule
+  MuralOracaoModule,
+  VisitanteModule
   ],
   controllers: [AppController],
   providers: [AppService],

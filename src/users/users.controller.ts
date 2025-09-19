@@ -1,45 +1,45 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { UsersService } from './user.service';
 import { User } from './users.entity';
 import { CreateUserDto } from './dto/create-users-dto';
 
-
 @Controller('users')
 export class UsersController {
-  
   constructor(private readonly usersService: UsersService) {}
 
-  // POST /users → cria um novo usuário
   @Post()
-  create(@Body() user: CreateUserDto) { 
+  create(@Body() user: CreateUserDto) {
     return this.usersService.create(user);
   }
 
-  // GET /users → retorna todos os usuários
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
-  // GET /users/:id → retorna 1 usuário pelo ID
   @Get(':id')
-  findOneById(@Param('id') id: string) { // @Param pega o valor da URL
-    return this.usersService.findById(id); // Converte para número
+  findOneById(@Param('id') id: string) {
+    return this.usersService.findById(id);
   }
 
-  // GET /users/email/:email
   @Get('email/:email')
   findByEmail(@Param('email') email: string) {
     return this.usersService.findByEmail(email);
   }
 
-  // PUT /users/:id → atualiza os dados de um usuário
   @Put(':id')
-  update(@Param('id') id: string, @Body() user: Partial<User>) {
+  update(@Param('id') id: string, @Body() user: import('./dto/update.user.dto').UpdateUserDto) {
     return this.usersService.update(id, user);
   }
 
-  // DELETE /users/:id → remove um usuário
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
