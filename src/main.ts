@@ -8,13 +8,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // 🔹 Habilitar CORS
+  //  Habilitar CORS
   app.enableCors({
     origin: ['http://localhost:5173', 'http://localhost:5174'] ,
     credentials: true, 
   });
 
-  // 🔹 Pipes globais
+  //  Pipes globais
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -28,7 +28,7 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
-  // 🔹 Swagger
+  //  Swagger
   const config = new DocumentBuilder()
     .setTitle('API PIB')
     .setDescription('Documentação da API da PIB (NestJS)')

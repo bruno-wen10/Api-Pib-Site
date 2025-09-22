@@ -16,13 +16,25 @@ export class UsersService {
     if (!user.password) {
       throw new Error('Password is required');
     }
-    // Verifica se o e-mail já existe
-    const existingUser = await this.usersRepository.findOne({ where: { email: user.email, deletedAt: IsNull() } });
-    if (existingUser) {
-      // Retorna erro HTTP 409 (Conflict) corretamente
+    // Busca usuário pelo e-mail, incluindo deletados
+    const existingUser = await this.usersRepository.findOne({ where: { email: user.email }, withDeleted: true });
+    if (existingUser && !existingUser.deletedAt) {
+      // Usuário ativo, não pode cadastrar
       throw new (await import('@nestjs/common')).ConflictException('E-mail já cadastrado');
     }
     const hashedPassword = await bcrypt.hash(user.password, 10);
+    if (existingUser && existingUser.deletedAt) {
+      // Usuário deletado, restaura e atualiza dados
+      await this.usersRepository.restore(existingUser.id);
+      Object.assign(existingUser, {
+        ...user,
+        password: hashedPassword,
+        permissions: user.permissions || {},
+        deletedAt: null,
+      });
+      return this.usersRepository.save(existingUser);
+    }
+    // Usuário não existe, cria novo
     const newUser = this.usersRepository.create({
       ...user,
       password: hashedPassword,
@@ -57,11 +69,7 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.usersRepository.softDelete(id);
-  }
-
-  async restore(id: string): Promise<void> {
-    await this.usersRepository.restore(id);
+    await this.usersRepository.delete(id);
   }
 
   async findWithDeleted(): Promise<User[]> {

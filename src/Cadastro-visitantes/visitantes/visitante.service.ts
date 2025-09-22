@@ -3,12 +3,11 @@ import fetch from 'node-fetch';
 import twilio from 'twilio';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
-import { Voluntario } from '../Cadastro-visitantes/voluntarios/voluntario.entity';
-import { SinchSmsService } from '../sinch-sms.service';
-import { Visitante } from 'src/Cadastro-visitantes/visitantes/visitante.entity';
-import { CreateVisitanteDto } from 'src/Cadastro-visitantes/visitantes/dto/create-visitante.dto';
-import { UpdateVisitanteDto } from 'src/Cadastro-visitantes/visitantes/dto/update-visitante.dto';
+import { Visitante } from './visitante.entity';
+import { CreateVisitanteDto } from './dto/create-visitante.dto';
+import { UpdateVisitanteDto } from './dto/update-visitante.dto';
+import { Voluntario } from '../voluntarios/voluntario.entity';
+import { SinchSmsService } from '../../sinch-sms.service';
 
 @Injectable()
 export class VisitanteService {

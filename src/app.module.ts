@@ -8,7 +8,10 @@ import { AppService } from './app.service';
 import { EventosModule } from './eventos/eventos.module';
 import { MinisterioModule } from './ministerio/ministerio.module';
 import { MuralOracaoModule } from './mural-oracao/muralOracao.module';
-import { VisitanteModule } from './visitantes/visitante.module';
+import { VisitanteModule } from './Cadastro-visitantes/visitantes/visitante.module';
+import { Voluntario } from './Cadastro-visitantes/voluntarios/voluntario.entity';
+import { Visitante } from './Cadastro-visitantes/visitantes/visitante.entity';
+import { VoluntarioModule } from './Cadastro-visitantes/voluntarios/voluntario.module';
 
 
 @Module({
@@ -23,13 +26,15 @@ import { VisitanteModule } from './visitantes/visitante.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: true,
+      entities: [Voluntario, Visitante],
     }),
     UsersModule,
     AuthModule,  
     EventosModule,
     MinisterioModule,
   MuralOracaoModule,
-  VisitanteModule
+  VisitanteModule,
+  VoluntarioModule,
   ],
   controllers: [AppController],
   providers: [AppService],
