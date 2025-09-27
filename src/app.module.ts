@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -12,6 +14,7 @@ import { VisitanteModule } from './Cadastro-visitantes/visitantes/visitante.modu
 import { Voluntario } from './Cadastro-visitantes/voluntarios/voluntario.entity';
 import { Visitante } from './Cadastro-visitantes/visitantes/visitante.entity';
 import { VoluntarioModule } from './Cadastro-visitantes/voluntarios/voluntario.module';
+import { MembrosModule } from './Secretaria-pib/membros/membros.module';
 
 
 @Module({
@@ -26,15 +29,16 @@ import { VoluntarioModule } from './Cadastro-visitantes/voluntarios/voluntario.m
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: true,
-      entities: [Voluntario, Visitante],
+      // entities: [Voluntario, Visitante], // autoLoadEntities já carrega tudo
     }),
-    UsersModule,
-    AuthModule,  
-    EventosModule,
-    MinisterioModule,
-  MuralOracaoModule,
-  VisitanteModule,
-  VoluntarioModule,
+      UsersModule,
+      AuthModule,
+      EventosModule,
+      MinisterioModule,
+      MuralOracaoModule,
+      MembrosModule,
+      // VisitanteModule,
+      // VoluntarioModule,
   ],
   controllers: [AppController],
   providers: [AppService],
